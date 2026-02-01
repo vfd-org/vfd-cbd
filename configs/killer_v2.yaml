@@ -1,0 +1,43 @@
+# Killer config v2 - ring geometry, single phase, wider detuning window
+# Goal: curved bowl/funnel boundary shape
+
+run:
+  seed: 1337
+  out_dir: out
+  run_name: killer_v2
+
+system:
+  N: 128
+  geometry: ring
+  radius: 1.0
+  lambda_decay: 0.35
+  cutoff: 1.50
+  neighbor_k: 3           # More neighbors for smoother coupling
+
+drive:
+  f0_hz: 1.0
+  A0: 0.40                # Moderate drive
+  phase_mode: single      # No frustration
+  phase_custom: []
+
+loss:
+  gamma: 0.35             # Lower loss
+
+sweep:
+  df_min: -0.08           # Wider detuning window
+  df_max: 0.08
+  n_df: 61
+  k_min: 0.01
+  k_max: 3.00             # Higher max coupling
+  n_k: 61
+
+sim:
+  dt: 0.02
+  T: 20.0
+  sample_every: 10
+  window_frac: 0.25
+
+thresholds:
+  C_threshold: 0.70
+  slip_threshold: 25
+  cluster_threshold: 2

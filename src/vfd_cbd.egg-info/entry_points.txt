@@ -1,0 +1,2 @@
+[console_scripts]
+vfd-cbd = vfd_cbd.cli:app

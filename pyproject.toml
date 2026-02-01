@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vfd-cbd"
+version = "0.1.0"
+description = "Coherence Boundary Diagnostic: A coupled-oscillator network stability and collapse boundary simulator"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+authors = [
+    {name = "VFD Research", email = "research@example.com"}
+]
+keywords = [
+    "coupled-oscillators",
+    "coherence",
+    "phase-dynamics",
+    "kuramoto",
+    "stability-analysis",
+    "parameter-sweep"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Scientific/Engineering :: Mathematics"
+]
+dependencies = [
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "matplotlib>=3.7.0",
+    "pyyaml>=6.0",
+    "pandas>=2.0.0",
+    "typer>=0.9.0",
+    "rich>=13.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0"
+]
+
+[project.scripts]
+vfd-cbd = "vfd_cbd.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/vfd-org/CBD"
+Documentation = "https://github.com/vfd-org/CBD#readme"
+Repository = "https://github.com/vfd-org/CBD"
+Issues = "https://github.com/vfd-org/CBD/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.setuptools.package-data]
+vfd_cbd = ["py.typed"]

@@ -1,0 +1,66 @@
+# VFD-CBD Default Configuration
+# Coherence Boundary Diagnostic: Coupled Oscillator Stability Analysis
+#
+# This configuration provides a comprehensive parameter sweep for
+# analyzing coherence stability boundaries.
+
+run:
+  seed: 42
+  out_dir: "out"
+  run_name: "default_sweep"
+
+system:
+  # Number of coupled oscillators
+  N: 128
+  # Geometry: "ring" (nearest-neighbor) or "circle_decay" (distance-based)
+  geometry: "ring"
+  # Radius for circle_decay geometry
+  radius: 1.0
+  # Number of neighbors on each side for ring geometry
+  neighbor_k: 2
+  # Decay length for distance coupling (circle_decay only)
+  lambda_decay: 0.5
+  # Cutoff in units of lambda for distance coupling
+  cutoff: 3.0
+
+drive:
+  # Base frequency in Hz
+  f0_hz: 100.0
+  # Drive amplitude
+  A0: 1.0
+  # Phase mode: "single" (all zero), "dual" (half at π), "custom"
+  phase_mode: "single"
+  # Custom phases (required if phase_mode is "custom")
+  # phase_custom: [0.0, 0.0, ...]
+
+loss:
+  # Loss/damping parameter
+  gamma: 0.1
+
+sweep:
+  # Detuning range (Δf/f0)
+  df_min: -0.1
+  df_max: 0.1
+  n_df: 51
+  # Coupling-to-loss ratio range (k/γ)
+  k_min: 0.1
+  k_max: 3.0
+  n_k: 51
+
+sim:
+  # Integration time step
+  dt: 0.001
+  # Total simulation time
+  T: 20.0
+  # Sample coherence every N steps
+  sample_every: 10
+  # Fraction of simulation time for analysis window
+  window_frac: 0.2
+
+thresholds:
+  # Coherence threshold for stability
+  C_threshold: 0.7
+  # Phase slip count threshold
+  slip_threshold: 5
+  # Cluster count threshold for split detection
+  cluster_threshold: 2

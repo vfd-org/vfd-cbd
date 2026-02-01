@@ -1,0 +1,293 @@
+Metadata-Version: 2.4
+Name: vfd-cbd
+Version: 0.1.0
+Summary: Coherence Boundary Diagnostic: A coupled-oscillator network stability and collapse boundary simulator
+Author-email: VFD Research <research@example.com>
+License: MIT
+Project-URL: Homepage, https://github.com/vfd-org/CBD
+Project-URL: Documentation, https://github.com/vfd-org/CBD#readme
+Project-URL: Repository, https://github.com/vfd-org/CBD
+Project-URL: Issues, https://github.com/vfd-org/CBD/issues
+Keywords: coupled-oscillators,coherence,phase-dynamics,kuramoto,stability-analysis,parameter-sweep
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Topic :: Scientific/Engineering :: Physics
+Classifier: Topic :: Scientific/Engineering :: Mathematics
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: scipy>=1.10.0
+Requires-Dist: matplotlib>=3.7.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: typer>=0.9.0
+Requires-Dist: rich>=13.0.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Dynamic: license-file
+
+# VFD-CBD: Coherence Boundary Diagnostic
+
+A coupled-oscillator network stability and collapse boundary simulator.
+
+## Overview
+
+VFD-CBD is a simulation tool for analyzing coherence stability in coupled phase oscillator networks. It maps coherence stability vs parameters (detuning and coupling-to-loss), producing:
+
+1. **Phase Diagram Heatmap**: Visualization of coherence metric C ∈ [0,1] across parameter space
+2. **Collapse Boundary Curve**: The contour where coherence crosses the stability threshold C*
+3. **Failure Mode Map**: Classification of system behavior (stable, decoherent, phase slip, cluster split, inversion)
+
+### Model
+
+The system models N coupled phase oscillators with Kuramoto-like dynamics:
+
+```
+dθ_i/dt = ω_i + Σ_j K_ij * sin(θ_j - θ_i) + D_i * sin(ω_d t + φ_i - θ_i)
+```
+
+Where:
+- `θ_i(t)`: Phase of oscillator i
+- `ω_i`: Natural frequency (with detuning)
+- `K_ij`: Coupling matrix (ring or distance-decay)
+- `D_i`: Drive coupling strength
+- `ω_d`: Drive frequency
+- `φ_i`: Drive phase offset
+
+The coherence is measured via the Kuramoto order parameter:
+
+```
+C(t) = |(1/N) Σ exp(i θ_j(t))|
+```
+
+## ⚠️ Non-Claims Disclaimer
+
+**This tool is strictly a resonant geometry / coupled oscillator network stability & collapse boundary diagnostic.**
+
+This software:
+- ❌ Does NOT make any claims about propulsion systems
+- ❌ Does NOT claim gravity manipulation or anti-gravity effects
+- ❌ Does NOT relate to UFOs, UAPs, or exotic phenomena
+- ❌ Does NOT claim power extraction or over-unity effects
+- ✅ IS a standard coupled oscillator simulation tool
+- ✅ IS for studying synchronization and coherence in oscillator networks
+- ✅ IS based on well-established Kuramoto model physics
+
+## Installation
+
+### From source (development)
+
+```bash
+git clone https://github.com/vfd-org/CBD.git
+cd CBD/vfd-cbd
+pip install -e ".[dev]"
+```
+
+### Requirements
+
+- Python 3.11+
+- numpy
+- scipy
+- matplotlib
+- pyyaml
+- pandas
+- typer
+- rich
+
+## Quick Start
+
+### Run a parameter sweep
+
+```bash
+# Using the CLI
+vfd-cbd sweep --config configs/coil_basic.yaml
+
+# Or using the script
+python scripts/run_sweep.py configs/coil_basic.yaml
+```
+
+### View results
+
+Results are saved to `out/run_<timestamp>_<hash>/`:
+
+```
+out/run_20240101_120000_abc123def456/
+├── config_resolved.yaml      # Resolved configuration
+├── results.json              # Full results in JSON format
+├── results.csv               # Long-format results for analysis
+├── plot_phase_diagram.png    # Coherence heatmap
+├── plot_collapse_boundary.png # Stability boundary curve
+└── plot_mode_map.png         # Failure mode classification
+```
+
+### Regenerate plots
+
+```bash
+vfd-cbd plot --run out/run_20240101_120000_abc123def456/
+```
+
+### Get run info
+
+```bash
+vfd-cbd info --run out/run_20240101_120000_abc123def456/
+```
+
+## Configuration
+
+Configuration is via YAML files. See `configs/default.yaml` for full options.
+
+### Key parameters
+
+```yaml
+system:
+  N: 128               # Number of oscillators
+  geometry: "ring"     # Coupling topology: "ring" or "circle_decay"
+  neighbor_k: 2        # Neighbors per side (ring geometry)
+
+drive:
+  f0_hz: 100.0         # Base frequency (Hz)
+  A0: 1.0              # Drive amplitude
+  phase_mode: "single" # Phase pattern: "single", "dual", "custom"
+
+loss:
+  gamma: 0.1           # Loss/damping parameter
+
+sweep:
+  df_min: -0.1         # Detuning range (Δf/f0)
+  df_max: 0.1
+  n_df: 51             # Grid points
+  k_min: 0.1           # Coupling-to-loss ratio range (k/γ)
+  k_max: 3.0
+  n_k: 51
+
+thresholds:
+  C_threshold: 0.7     # Coherence threshold for stability
+```
+
+## CLI Reference
+
+```bash
+# Run a sweep
+vfd-cbd sweep --config CONFIG_FILE [--out-dir DIR] [--no-plots] [--quiet]
+
+# Regenerate plots
+vfd-cbd plot --run RUN_FOLDER [--dpi DPI]
+
+# Export results
+vfd-cbd export --run RUN_FOLDER [--format json,csv]
+
+# Show run info
+vfd-cbd info --run RUN_FOLDER
+
+# List all runs
+vfd-cbd list-runs [--out-dir DIR]
+
+# Version info
+vfd-cbd version
+```
+
+## Python API
+
+```python
+from vfd_cbd import Config, load_config, run_sweep, plot_all
+
+# Load configuration
+config = load_config("configs/coil_basic.yaml")
+
+# Run parameter sweep
+result = run_sweep(config)
+
+# Access results
+print(f"Stable fraction: {result.stable_mask.mean():.2%}")
+print(f"Mean coherence: {result.C_mean.mean():.3f}")
+
+# Generate plots
+plot_all(result, "my_output_dir")
+```
+
+## Output Format
+
+### results.csv columns
+
+| Column | Description |
+|--------|-------------|
+| df_over_f0 | Detuning ratio Δf/f0 |
+| k_over_gamma | Coupling-to-loss ratio k/γ |
+| C_mean | Mean coherence over analysis window |
+| C_min | Minimum coherence |
+| C_max | Maximum coherence |
+| C_std | Standard deviation of coherence |
+| stable | Boolean stability flag |
+| mode_id | Numeric mode identifier |
+| mode | Mode name (stable/decoherent/phase_slip/cluster_split/inversion) |
+| phase_slip_count | Number of detected phase slips |
+| cluster_count | Number of phase clusters |
+
+## Reproducibility
+
+The simulator is designed for reproducibility:
+
+- Uses fixed-step RK4 integration (bitwise deterministic)
+- Seeded random initial conditions
+- Configuration hash tracks exact parameters
+- Same config + seed = identical results
+
+```python
+from vfd_cbd import load_config, run_sweep
+
+# Two runs with same config produce identical results
+config = load_config("configs/coil_basic.yaml")
+result1 = run_sweep(config)
+result2 = run_sweep(config)
+assert (result1.C_mean == result2.C_mean).all()
+```
+
+## Testing
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=vfd_cbd
+
+# Run specific test file
+pytest tests/test_metrics.py
+```
+
+## Example Output
+
+The sweep produces three main plots:
+
+1. **Phase Diagram**: A heatmap showing coherence C across the (detuning, coupling) parameter space, with a contour at the stability threshold C*.
+
+2. **Collapse Boundary**: The curve separating stable (high coherence) and unstable (low coherence) regions.
+
+3. **Mode Map**: Classification of failure modes at each parameter point, showing where the system experiences phase slips, cluster splitting, or simple decoherence.
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file.
+
+## Contributing
+
+Contributions are welcome! Please open an issue or pull request on GitHub.
+
+## Citation
+
+If you use this software in research, please cite:
+
+```bibtex
+@software{vfd_cbd,
+  title = {VFD-CBD: Coherence Boundary Diagnostic},
+  author = {VFD Research},
+  year = {2024},
+  url = {https://github.com/vfd-org/CBD}
+}
+```

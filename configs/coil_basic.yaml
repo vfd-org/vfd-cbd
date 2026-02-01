@@ -1,0 +1,48 @@
+# VFD-CBD Basic Coil Configuration
+# Coherence Boundary Diagnostic: Quick Test Configuration
+#
+# A smaller configuration suitable for quick testing and validation.
+# Runs in a few seconds on typical hardware.
+
+run:
+  seed: 42
+  out_dir: "out"
+  run_name: "coil_basic"
+
+system:
+  # Smaller oscillator count for fast runs
+  N: 64
+  geometry: "ring"
+  radius: 1.0
+  neighbor_k: 2
+  lambda_decay: 0.5
+  cutoff: 3.0
+
+drive:
+  f0_hz: 100.0
+  A0: 1.0
+  phase_mode: "single"
+
+loss:
+  gamma: 0.1
+
+sweep:
+  # Reduced grid for quick testing
+  df_min: -0.1
+  df_max: 0.1
+  n_df: 25
+  k_min: 0.1
+  k_max: 2.0
+  n_k: 25
+
+sim:
+  dt: 0.001
+  # Shorter simulation time
+  T: 10.0
+  sample_every: 10
+  window_frac: 0.2
+
+thresholds:
+  C_threshold: 0.7
+  slip_threshold: 5
+  cluster_threshold: 2

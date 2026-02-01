@@ -1,0 +1,5 @@
+cff-version: 1.2.0
+title: "VFD-CBD: Coherence Boundary Diagnostic"
+version: 0.1.0
+abstract: "A deterministic simulator for coherence and stability boundaries in coupled oscillator networks."
+license: MIT

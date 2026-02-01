@@ -1,0 +1,43 @@
+# Killer config v4 - ring geometry with dual phase for frustration
+# Balanced stability to show clear boundary structure
+
+run:
+  seed: 1337
+  out_dir: out
+  run_name: killer_v4
+
+system:
+  N: 128
+  geometry: ring
+  radius: 1.0
+  lambda_decay: 0.35
+  cutoff: 1.50
+  neighbor_k: 3
+
+drive:
+  f0_hz: 1.0
+  A0: 0.35                # Moderate-low drive
+  phase_mode: dual        # Add frustration
+  phase_custom: []
+
+loss:
+  gamma: 0.45             # Moderate loss
+
+sweep:
+  df_min: -0.06           # Slightly narrower
+  df_max: 0.06
+  n_df: 61
+  k_min: 0.01
+  k_max: 2.50
+  n_k: 61
+
+sim:
+  dt: 0.02
+  T: 20.0
+  sample_every: 10
+  window_frac: 0.25
+
+thresholds:
+  C_threshold: 0.70
+  slip_threshold: 25
+  cluster_threshold: 2

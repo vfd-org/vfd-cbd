@@ -1,0 +1,43 @@
+# Tuning config - faster iteration (61x61 grid)
+# Adjustments: increased A0, reduced gamma, increased lambda_decay for more stability
+
+run:
+  seed: 1337
+  out_dir: out
+  run_name: killer_tuning
+
+system:
+  N: 128
+  geometry: circle_decay
+  radius: 1.0
+  lambda_decay: 0.45       # increased from 0.35 for more global coupling
+  cutoff: 1.50
+  neighbor_k: 2
+
+drive:
+  f0_hz: 1.0
+  A0: 0.65                 # increased from 0.50 for more stability
+  phase_mode: dual
+  phase_custom: []
+
+loss:
+  gamma: 0.45              # reduced from 0.55 for more stability
+
+sweep:
+  df_min: -0.03
+  df_max: 0.03
+  n_df: 61                 # reduced for faster tuning
+  k_min: 0.01
+  k_max: 2.40
+  n_k: 61
+
+sim:
+  dt: 0.02
+  T: 20.0
+  sample_every: 10
+  window_frac: 0.25
+
+thresholds:
+  C_threshold: 0.72
+  slip_threshold: 25
+  cluster_threshold: 2
