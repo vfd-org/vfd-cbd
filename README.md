@@ -1,5 +1,13 @@
 # VFD-CBD — Coherence Boundary Diagnostic
 
+![Failure Mode Map](images/mode_map.png)
+
+# VFD-CBD — Coherence Boundary Diagnostic
+
+A reproducible simulator for mapping coherence and stability boundaries in coupled phase-oscillator networks.
+
+This tool analyzes how detuning and coupling-to-loss ratios affect global coherence and identifies structured failure regimes.
+
 VFD-CBD is a deterministic numerical simulator for studying coherence, stability,
 and failure modes in coupled phase-oscillator networks. The tool maps stability
 regions and collapse boundaries as a function of detuning and coupling-to-loss,
@@ -71,3 +79,4 @@ schema, and diagnostics are expected to evolve.
 ## License
 
 MIT License - see [LICENSE](LICENSE) file.
+
