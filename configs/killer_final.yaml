@@ -1,5 +1,5 @@
 # FINAL killer config - based on v3 which showed clear stable island
-# Full 81x81 resolution for release
+# High resolution 201x201 for release
 
 run:
   seed: 1337
@@ -26,10 +26,11 @@ loss:
 sweep:
   df_min: -0.08
   df_max: 0.08
-  n_df: 81
+  n_df: 501
   k_min: 0.01
   k_max: 3.00
-  n_k: 81
+  n_k: 501
+
 
 sim:
   dt: 0.02

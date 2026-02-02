@@ -1,0 +1,34 @@
+run:
+  seed: 1337
+  out_dir: out
+  run_name: killer_final
+system:
+  N: 128
+  geometry: ring
+  radius: 1.0
+  neighbor_k: 3
+  lambda_decay: 0.35
+  cutoff: 1.5
+drive:
+  f0_hz: 1.0
+  A0: 0.25
+  phase_mode: single
+  phase_custom: []
+loss:
+  gamma: 0.5
+sweep:
+  df_min: -0.08
+  df_max: 0.08
+  n_df: 1001
+  k_min: 0.01
+  k_max: 3.0
+  n_k: 1001
+sim:
+  dt: 0.02
+  T: 20.0
+  sample_every: 10
+  window_frac: 0.25
+thresholds:
+  C_threshold: 0.7
+  slip_threshold: 25
+  cluster_threshold: 2

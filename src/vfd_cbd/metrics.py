@@ -14,11 +14,12 @@ from dataclasses import dataclass
 @dataclass
 class CoherenceStats:
     """Statistics computed from coherence time series."""
-    C_mean: float      # Mean coherence over analysis window
-    C_min: float       # Minimum coherence over analysis window
-    C_max: float       # Maximum coherence over analysis window
-    C_std: float       # Standard deviation over analysis window
-    C_final: float     # Final coherence value
+
+    C_mean: float  # Mean coherence over analysis window
+    C_min: float  # Minimum coherence over analysis window
+    C_max: float  # Maximum coherence over analysis window
+    C_std: float  # Standard deviation over analysis window
+    C_final: float  # Final coherence value
 
 
 def kuramoto_order_parameter(theta: NDArray[np.float64]) -> float:
@@ -73,8 +74,7 @@ def kuramoto_complex_order(theta: NDArray[np.float64]) -> complex:
 
 
 def compute_coherence_stats(
-    C_samples: NDArray[np.float64],
-    window_frac: float = 0.2
+    C_samples: NDArray[np.float64], window_frac: float = 0.2
 ) -> CoherenceStats:
     """
     Compute coherence statistics over the analysis window.
@@ -94,13 +94,7 @@ def compute_coherence_stats(
     """
     n_samples = len(C_samples)
     if n_samples == 0:
-        return CoherenceStats(
-            C_mean=0.0,
-            C_min=0.0,
-            C_max=0.0,
-            C_std=0.0,
-            C_final=0.0
-        )
+        return CoherenceStats(C_mean=0.0, C_min=0.0, C_max=0.0, C_std=0.0, C_final=0.0)
 
     # Get analysis window (last window_frac of samples)
     window_start = int(n_samples * (1 - window_frac))
@@ -115,14 +109,12 @@ def compute_coherence_stats(
         C_min=float(np.min(window)),
         C_max=float(np.max(window)),
         C_std=float(np.std(window)),
-        C_final=float(C_samples[-1])
+        C_final=float(C_samples[-1]),
     )
 
 
 def count_phase_slips(
-    theta_history: NDArray[np.float64],
-    dt: float,
-    threshold: float = np.pi
+    theta_history: NDArray[np.float64], dt: float, threshold: float = np.pi
 ) -> int:
     """
     Count phase slip events.
@@ -160,8 +152,7 @@ def count_phase_slips(
 
 
 def count_phase_slips_from_coherence(
-    C_samples: NDArray[np.float64],
-    drop_threshold: float = 0.3
+    C_samples: NDArray[np.float64], drop_threshold: float = 0.3
 ) -> int:
     """
     Estimate phase slip count from coherence drops.
@@ -193,10 +184,7 @@ def count_phase_slips_from_coherence(
     return int(drops)
 
 
-def count_clusters(
-    theta: NDArray[np.float64],
-    n_bins: int = 36
-) -> int:
+def count_clusters(theta: NDArray[np.float64], n_bins: int = 36) -> int:
     """
     Count the number of phase clusters using histogram binning.
 
@@ -265,10 +253,12 @@ def detect_inversion(
     phi: NDArray[np.float64],
     omega_d: float,
     t: float,
-    threshold: float = np.pi / 2
+    threshold: float = np.pi / 2,
 ) -> bool:
     """
     Detect if the mean phase is inverted relative to the drive.
+
+    Checks if theta_i - phi_i is inverted relative to omega_d * t.
 
     Parameters
     ----------
@@ -288,24 +278,28 @@ def detect_inversion(
     inverted : bool
         True if mean phase is near π from expected drive phase.
     """
-    # Get complex order parameter
-    Z = kuramoto_complex_order(theta)
-    mean_phase = np.angle(Z)
+    # Calculate phase relative to drive offset
+    # We want to check if (theta - phi) is locked to omega_d * t
+    # or omega_d * t + pi
 
-    # Expected mean phase from drive (assuming perfect locking)
-    # For single phase mode, expected phase = omega_d * t
+    # Compute order parameter of adjusted phases
+    # Z = (1/N) * sum(exp(i * (theta_j - phi_j)))
+    complex_phases = np.exp(1j * (theta - phi))
+    Z = np.mean(complex_phases)
+    mean_phase_adjusted = np.angle(Z)
+
+    # Expected phase is just the drive phase accumulation
     expected_phase = omega_d * t
 
     # Phase difference
-    phase_diff = np.mod(mean_phase - expected_phase + np.pi, 2 * np.pi) - np.pi
+    phase_diff = np.mod(mean_phase_adjusted - expected_phase + np.pi, 2 * np.pi) - np.pi
 
     # Check if near π (inverted)
     return bool(abs(abs(phase_diff) - np.pi) < threshold)
 
 
 def compute_phase_velocity(
-    C_samples: NDArray[np.float64],
-    t_samples: NDArray[np.float64]
+    C_samples: NDArray[np.float64], t_samples: NDArray[np.float64]
 ) -> NDArray[np.float64]:
     """
     Compute the rate of change of coherence.
@@ -334,10 +328,7 @@ def compute_phase_velocity(
     return dC / dt
 
 
-def is_stable(
-    stats: CoherenceStats,
-    C_threshold: float
-) -> bool:
+def is_stable(stats: CoherenceStats, C_threshold: float) -> bool:
     """
     Determine if the system is stable based on coherence threshold.
 

@@ -23,11 +23,18 @@ from .metrics import (
     compute_coherence_stats,
     count_phase_slips,
     count_clusters,
-    detect_inversion
+    detect_inversion,
 )
 from .modes import classify_mode, ModeType
 from .sweep import run_sweep, SweepResult
-from .plots import plot_phase_diagram, plot_collapse_boundary, plot_mode_map
+
+try:
+    from .plots import plot_phase_diagram, plot_collapse_boundary, plot_mode_map
+except ImportError:
+    # Handle missing matplotlib
+    plot_phase_diagram = None
+    plot_collapse_boundary = None
+    plot_mode_map = None
 from .io import save_results, load_results, create_run_folder, compute_config_hash
 
 __all__ = [
